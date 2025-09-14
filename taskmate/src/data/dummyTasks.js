@@ -23,4 +23,12 @@ export const dummyTasks = [
     deadline: "2025-08-28",
     status: "pending",
   },
+  {
+    id: "4",
+    title: "Rancang struktur folder",
+    description: "Skema database IoT",
+    category: "IoT",
+    deadline: "2025-08-25",
+    status: "done",
+  },
 ];

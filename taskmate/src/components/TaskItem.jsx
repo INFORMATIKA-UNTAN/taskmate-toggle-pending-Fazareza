@@ -1,6 +1,15 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+
 export default function TaskItem({ task, onToggle }) {
   const isDone = task.status === "done";
+
+  // mapping warna kategori
+  const categoryColors = {
+    Mobile: "#38bdf8", // biru
+    RPL: "#4ade80", // hijau
+    IoT: "#facc15", // kuning
+  };
+
   return (
     <TouchableOpacity onPress={() => onToggle?.(task)} activeOpacity={0.7}>
       <View style={[styles.card, isDone && styles.cardDone]}>
@@ -9,11 +18,23 @@ export default function TaskItem({ task, onToggle }) {
             {task.title}
           </Text>
           <Text style={styles.desc}>{task.description}</Text>
-          <Text style={styles.meta}>
-            {task.category} • Due
-            {task.deadline}
-          </Text>
+
+          {/* Baris meta + kategori */}
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Text style={styles.meta}>Due {task.deadline}</Text>
+
+            <View
+              style={[
+                styles.categoryBadge,
+                { backgroundColor: categoryColors[task.category] || "#94a3b8" },
+              ]}
+            >
+              <Text style={styles.categoryText}>{task.category}</Text>
+            </View>
+          </View>
         </View>
+
+        {/* Badge status */}
         <View
           style={[
             styles.badge,
@@ -26,6 +47,7 @@ export default function TaskItem({ task, onToggle }) {
     </TouchableOpacity>
   );
 }
+
 const styles = StyleSheet.create({
   card: {
     padding: 14,
@@ -41,6 +63,8 @@ const styles = StyleSheet.create({
   strike: { textDecorationLine: "line-through", color: "#64748b" },
   desc: { color: "#475569", marginBottom: 6 },
   meta: { fontSize: 12, color: "#64748b" },
+
+  // Badge status
   badge: {
     paddingVertical: 6,
     paddingHorizontal: 10,
@@ -50,4 +74,16 @@ const styles = StyleSheet.create({
   badgePending: { backgroundColor: "#fee2e2" },
   badgeDone: { backgroundColor: "#dcfce7" },
   badgeText: { fontWeight: "700", fontSize: 12 },
+
+  // Badge kategori
+  categoryBadge: {
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+  },
+  categoryText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "white",
+  },
 });
