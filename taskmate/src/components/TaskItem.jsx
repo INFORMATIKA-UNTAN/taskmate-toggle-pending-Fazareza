@@ -1,8 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 
-export default function TaskItem({ task, onToggle }) {
-  const isDone = task.status === "done";
-
+export default function TaskItem({ task, onToggle, onDelete }) {
   // mapping warna kategori
   const categoryColors = {
     Mobile: "#38bdf8", // biru
@@ -12,37 +16,36 @@ export default function TaskItem({ task, onToggle }) {
 
   return (
     <TouchableOpacity onPress={() => onToggle?.(task)} activeOpacity={0.7}>
-      <View style={[styles.card, isDone && styles.cardDone]}>
+      <View style={styles.card}>
+        {/* Info task */}
         <View style={{ flex: 1 }}>
-          <Text style={[styles.title, isDone && styles.strike]}>
+          <Text style={[styles.title, task.status === "done" && styles.strike]}>
             {task.title}
           </Text>
           <Text style={styles.desc}>{task.description}</Text>
-
-          {/* Baris meta + kategori */}
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Text style={styles.meta}>Due {task.deadline}</Text>
-
-            <View
-              style={[
-                styles.categoryBadge,
-                { backgroundColor: categoryColors[task.category] || "#94a3b8" },
-              ]}
-            >
-              <Text style={styles.categoryText}>{task.category}</Text>
-            </View>
-          </View>
+          <Text style={styles.meta}>
+            {task.category} • Due {task.deadline}
+          </Text>
         </View>
 
         {/* Badge status */}
         <View
           style={[
             styles.badge,
-            isDone ? styles.badgeDone : styles.badgePending,
+            task.status === "todo" && styles.badgeTodo,
+            task.status === "pending" && styles.badgePending,
+            task.status === "done" && styles.badgeDone,
           ]}
         >
-          <Text style={styles.badgeText}>{isDone ? "Done" : "Todo"}</Text>
+          <Text style={styles.badgeText}>
+            {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+          </Text>
         </View>
+
+        {/* Tombol delete */}
+        <Pressable onPress={() => onDelete?.(task)} style={styles.deleteBtn}>
+          <Text style={styles.deleteText}>✕</Text>
+        </Pressable>
       </View>
     </TouchableOpacity>
   );
@@ -50,40 +53,43 @@ export default function TaskItem({ task, onToggle }) {
 
 const styles = StyleSheet.create({
   card: {
-    padding: 14,
+    backgroundColor: "white",
+    padding: 12,
     borderRadius: 12,
-    backgroundColor: "#fff",
-    marginBottom: 10,
+    marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
-    elevation: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  cardDone: { backgroundColor: "#f1f5f9" },
-  title: { fontSize: 16, fontWeight: "600", marginBottom: 4 },
-  strike: { textDecorationLine: "line-through", color: "#64748b" },
-  desc: { color: "#475569", marginBottom: 6 },
-  meta: { fontSize: 12, color: "#64748b" },
+  title: { fontSize: 16, fontWeight: "600" },
+  desc: { fontSize: 14, color: "#64748b" },
+  meta: { fontSize: 12, color: "#94a3b8", marginTop: 4 },
+  strike: { textDecorationLine: "line-through", color: "#94a3b8" },
 
-  // Badge status
   badge: {
-    paddingVertical: 6,
+    paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: 8,
-    marginLeft: 12,
+    marginRight: 8,
   },
-  badgePending: { backgroundColor: "#fee2e2" },
-  badgeDone: { backgroundColor: "#dcfce7" },
-  badgeText: { fontWeight: "700", fontSize: 12 },
+  badgeText: { color: "white", fontWeight: "600" },
 
-  // Badge kategori
-  categoryBadge: {
-    paddingVertical: 2,
+  badgeTodo: { backgroundColor: "#38bdf8" },
+  badgePending: { backgroundColor: "#facc15" },
+  badgeDone: { backgroundColor: "#22c55e" },
+
+  deleteBtn: {
     paddingHorizontal: 8,
-    borderRadius: 12,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: "#ef4444",
   },
-  categoryText: {
-    fontSize: 11,
-    fontWeight: "600",
+  deleteText: {
     color: "white",
+    fontWeight: "700",
+    fontSize: 12,
   },
 });
